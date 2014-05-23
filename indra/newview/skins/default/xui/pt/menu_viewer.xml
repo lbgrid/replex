@@ -163,7 +163,7 @@
 			<menu_item_call label="Questões de Segurança..." name="Security Issues..."/>
 			<menu_item_call label="Wiki de QA ..." name="QA Wiki..."/>
 			<menu_item_call label="Reportar Bug..." name="Report Bug..."/>
-			<menu_item_call label="Reportar Problemas com Singularity..." name="Report Singularity Bug..."/>
+			<menu_item_call label="Reportar Problemas com Replex..." name="Report Replex Bug..."/>
 		</menu>
 		<menu_item_call label="Sobre [APP_NAME]..." name="About Second Life..."/>
 	</menu>

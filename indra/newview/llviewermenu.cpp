@@ -9457,7 +9457,7 @@ void initialize_menus()
 	addMenu(new LLEditableSelected(), "EditableSelected");
 	addMenu(new LLEditableSelectedMono(), "EditableSelectedMono");
 
-	// Singularity menu
+	// Replex menu
 	addMenu(new SinguCloseAllDialogs(), "CloseAllDialogs");
 	// ---- Fake away handled elsewhere
 	addMenu(new SinguNimble(), "Nimble");

@@ -839,7 +839,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>http://singularity-viewer.github.io</string>
+      <string>http://replex-viewer.github.io</string>
     </map>
     <key>SingularitySplashPagePath</key>
     <map>

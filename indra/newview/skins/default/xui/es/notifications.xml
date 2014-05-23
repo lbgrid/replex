@@ -138,7 +138,7 @@ Detalles del error: El alerta llamado &apos;[_NAME]&apos; no ha sido encontado e
 	</notification>
 	
 	<notification name="BadInstallation">
-		Ha ocurrido un error al actualizar [APP_NAME].  Por favor, descarga la última versión desde www.singularityviewer.org.
+		Ha ocurrido un error al actualizar [APP_NAME].  Por favor, descarga la última versión desde www.replex.org.
 		<usetemplate name="okbutton" yestext="OK"/>
 	</notification>
 	
@@ -1835,9 +1835,9 @@ Esta actualización no es obligatoria, pero te sugerimos instalarla para mejorar
 	</notification>
 	
 	<notification name="WebLaunchSinguIssue">
-		Visita Singularity Issue Tracker (Seguimiento de incidencias del Visor Singularity), donde podrás informar de errores y otros asuntos del visor Singularity.
+		Visita Replex Issue Tracker (Seguimiento de incidencias del Visor Replex), donde podrás informar de errores y otros asuntos del visor Replex.
 Por favor, asegurate de que tu reporte no será un duplicado de uno ya existente.		
-    <usetemplate ignoretext="Cuando se abra el navegador para ir al Issue Tracker de Singularity" name="okcancelignore" notext="Cancelar" yestext="Ir a la Página"/>
+    <usetemplate ignoretext="Cuando se abra el navegador para ir al Issue Tracker de Replex" name="okcancelignore" notext="Cancelar" yestext="Ir a la Página"/>
 	</notification>	
   
 	<notification name="WebLaunchPublicIssueHelp">
@@ -5538,7 +5538,7 @@ porque la parcela está llena.
 			No se pueden crear mega prims que intersectan con otros agentes.  Por favor reintenta cuando los otros agentes se hayan movido.
 	</notification>
 
-<!-- Singularity Specific notifications should go below here, alphabetically -->
+<!-- Replex Specific notifications should go below here, alphabetically -->
 <!-- Singu TODO: Migrate our special notifications to here -->	
 	<notification name="AntiSpamBlock">
 		AntiSpam: [SOURCE] ha sido bloqueado por espamear [TYPE]s [AMOUNT] veces en [TIME] segundos.

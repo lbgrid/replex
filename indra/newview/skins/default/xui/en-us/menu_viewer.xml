@@ -948,9 +948,9 @@
 				     userdata="WebLaunchPublicIssueHelp,http://wiki.secondlife.com/wiki/Issue_tracker" />
 			</menu_item_call>
 			<menu_item_call bottom="-94" enabled="true" height="19" label="[SHORT_APP_NAME] Issue Tracker..."
-			     left="0" mouse_opaque="true" name="Singularity Issue Tracker..." width="166">
+			     left="0" mouse_opaque="true" name="Replex Issue Tracker..." width="166">
 				<on_click function="PromptShowURL" name="SinguIssueTracker_url"
-						userdata="WebLaunchSinguIssue,http://links.singularityviewer.org/?to=issues" />
+						userdata="WebLaunchSinguIssue,http://jira.openmetaverse.org/browse/REPLEX" />
 			</menu_item_call>
 			<menu_item_separator name="separator7" />
 			<menu_item_call bottom="-94" enabled="true" height="19" label="Bug Reporting 101..." left="0"
@@ -977,10 +977,10 @@
 			<menu_item_call bottom="-240" enabled="true" height="19" label="Report [SHORT_APP_NAME] Bug..." left="0"
 			     mouse_opaque="true" name="Report [SHORT_APP_NAME] Bug..." width="166">
 				<on_click function="PromptShowURL" name="ReportSinguBug_url"
-						userdata="WebLaunchSinguIssue,http://code.google.com/p/singularity-viewer/issues/entry" />
+						userdata="WebLaunchSinguIssue,http://jira.openmetaverse.org/browse/REPLEX" />
 			</menu_item_call>
 			<menu_item_call bottom="-240" enabled="true" height="19" label="Request New Feature..." name="Request New Feature..." width="166">
-				<on_click function="PromptShowURL" name="RequestFeature_url" userdata="WebLaunchSinguIssue,http://code.google.com/p/singularity-viewer/issues/entry?template=Feature%20request"/>
+				<on_click function="PromptShowURL" name="RequestFeature_url" userdata="WebLaunchSinguIssue,http://jira.openmetaverse.org/browse/REPLEX"/>
 			</menu_item_call>
 		</menu>
 		<menu_item_call bottom="-313" enabled="true" height="19" label="About [APP_NAME]..." left="0"
@@ -988,7 +988,7 @@
 			<on_click function="ShowFloater" userdata="about" />
 		</menu_item_call>
 	</menu>
-	<menu create_jump_keys="true" drop_shadow="true" enabled="true" label="[SHORT_APP_NAME]" mouse_opaque="false" name="Singularity" opaque="true" tear_off="true">
+	<menu create_jump_keys="true" drop_shadow="true" enabled="true" label="[SHORT_APP_NAME]" mouse_opaque="false" name="Replex" opaque="true" tear_off="true">
 		<menu_item_call label="Close All Dialogs" mouse_opaque="true" name="Close All Dialogs" shortcut="control|alt|shift|D">
 			<on_click function="CloseAllDialogs"/>
 		</menu_item_call>

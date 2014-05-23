@@ -300,12 +300,12 @@ BOOL gLogoutInProgress = FALSE;
 // Internal globals... that should be removed.
 static std::string gArgs;
 
-const std::string MARKER_FILE_NAME("Singularity.exec_marker");
-const std::string ERROR_MARKER_FILE_NAME("Singularity.error_marker");
-const std::string LLERROR_MARKER_FILE_NAME("Singularity.llerror_marker");
-const std::string LOGOUT_MARKER_FILE_NAME("Singularity.logout_marker");
-const std::string LOG_FILE("Singularity.log");
-extern const std::string OLD_LOG_FILE("Singularity.old");
+const std::string MARKER_FILE_NAME("Replex.exec_marker");
+const std::string ERROR_MARKER_FILE_NAME("Replex.error_marker");
+const std::string LLERROR_MARKER_FILE_NAME("Replex.llerror_marker");
+const std::string LOGOUT_MARKER_FILE_NAME("Replex.logout_marker");
+const std::string LOG_FILE("Replex.log");
+extern const std::string OLD_LOG_FILE("Replex.old");
 static BOOL gDoDisconnect = FALSE;
 static std::string gLaunchFileOnQuit;
 
@@ -1954,7 +1954,7 @@ bool LLAppViewer::initLogging()
 	std::string log_file = gDirUtilp->getExpandedFilename(LL_PATH_LOGS, LOG_FILE);
 	LLFile::rename(log_file, old_log_file);
 
-	// Set the log file to Singularity.log
+	// Set the log file to Replex.log
 
 	LLError::logToFile(log_file);
 
@@ -2344,7 +2344,7 @@ bool LLAppViewer::initConfiguration()
     }
 
 	// XUI:translate
-	gSecondLife = "Singularity Viewer";
+	gSecondLife = "Replex Viewer";
 
 	// Read skin/branding settings if specified.
 	//if (! gDirUtilp->getSkinDir().empty() )
@@ -2878,10 +2878,10 @@ void LLAppViewer::initMarkerFile()
 	LL_DEBUGS("MarkerFile") << "Checking marker file for lock..." << LL_ENDL;
 
 	//We've got 4 things to test for here
-	// - Other Process Running (Singularity.exec_marker present, locked)
-	// - Freeze (Singularity.exec_marker present, not locked)
-	// - LLError Crash (Singularity.llerror_marker present)
-	// - Other Crash (Singularity.error_marker present)
+	// - Other Process Running (Replex.exec_marker present, locked)
+	// - Freeze (Replex.exec_marker present, not locked)
+	// - LLError Crash (Replex.llerror_marker present)
+	// - Other Crash (Replex.error_marker present)
 	// These checks should also remove these files for the last 2 cases if they currently exist
 
 	//LLError/Error checks. Only one of these should ever happen at a time.
@@ -3564,7 +3564,7 @@ void LLAppViewer::badNetworkHandler()
 		"the issue. \n"
 		" \n"
 		"If the problem continues, please report the issue at: \n"
-		"http://www.singularityviewer.org" << grid_support_msg;
+		"http://www.replex.org" << grid_support_msg;
 	forceDisconnect(message.str());
 	
 	LLApp::instance()->writeMiniDump();

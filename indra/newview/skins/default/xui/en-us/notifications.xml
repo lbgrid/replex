@@ -3237,10 +3237,10 @@ Visit the [SECOND_LIFE] Public Issue Tracker, where you can report bugs and othe
    icon="alertmodal.tga"
    name="WebLaunchSinguIssue"
    type="alertmodal">
-Visit the Singularity Issue Tracker, to report bugs and issues with Singularity Viewer.
+Visit the Replex Issue Tracker, to report bugs and issues with Replex Viewer.
 Please be sure that your report won't be a duplicate of an existing one.
     <usetemplate
-     ignoretext="When launching web browser to view Singularity Issue Tracker"
+     ignoretext="When launching web browser to view Replex Issue Tracker"
      name="okcancelignore"
      notext="Cancel"
      yestext="Go to page"/>
@@ -9741,7 +9741,7 @@ Cannot create large prims that intersect other players.  Please re-try when othe
   </notification>
 
 
-<!-- Singularity Specific notifications should go below here, alphabetically -->
+<!-- Replex Specific notifications should go below here, alphabetically -->
 <!-- Singu Note: RLVa notifications come first here -->
   <notification
    icon="alertmodal.tga"
