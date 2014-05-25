@@ -651,6 +651,17 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>LiruBlockConferences</key>
+    <map>
+      <key>Comment</key>
+      <string>When true, new incoming conference chats will not be opened.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>LiruContinueFlyingOnUnsit</key>
     <map>
       <key>Comment</key>
@@ -768,6 +779,17 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>LiruLegacyScrollToEnd</key>
+    <map>
+      <key>Comment</key>
+      <string>Automatically scroll to the end of a chat's history when the chat regains focus.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>LiruLocalTime</key>
     <map>
       <key>Comment</key>
@@ -844,6 +866,17 @@
       <string>Boolean</string>
       <key>Value</key>
       <boolean>1</boolean>
+    </map>
+    <key>LiruMouselookInstantZoom</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not the right click zoom in mouselook will be instant or smoothly transition between zooms</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <boolean>0</boolean>
     </map>
     <key>LiruMouselookMenu</key>
     <map>
@@ -983,6 +1016,17 @@ Found in Advanced->Rendering->Info Displays</string>
       <string>Boolean</string>
       <key>Value</key>
       <integer>1</integer>
+    </map>
+    <key>UseRealisticMouselook</key>
+    <map>
+      <key>Comment</key>
+      <string>Use a realistic first person view, this prevents your camera from being the center of everything and your avatar always beeing locked below you, it allows your Avatar to move around freely in mouselook while your camera will follow it around. Prepare your seatbelts for an awesome shaky View! May break with certain super unrealistic animations.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
     </map>
     <key>LogShowHistoryLines</key>
     <map>
@@ -3047,6 +3091,17 @@ This should be as low as possible, but too low may break functionality</string>
       <key>Value</key>
       <integer>2</integer>
     </map>  
+    <key>AvatarRotateThresholdMouselook</key>
+    <map>
+      <key>Comment</key>
+      <string>Angle between avatar facing and camera facing at which avatar turns to face same direction as camera, when in mouselook (degrees)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>120</real>
+    </map>
     <key>AvatarBakedTextureUploadTimeout</key>
     <map>
       <key>Comment</key>
@@ -8409,6 +8464,17 @@ This should be as low as possible, but too low may break functionality</string>
       <string>F32</string>
       <key>Value</key>
       <real>1.0</real>
+    </map>
+    <key>FlycamBuildModeScale</key>
+    <map>
+      <key>Comment</key>
+      <string>Scale factor to apply to flycam movements when in build mode.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>0.3333333</real>
     </map>
     <key>FlycamFeathering</key>
     <map>

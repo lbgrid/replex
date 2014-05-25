@@ -1030,7 +1030,8 @@ void LLFloaterIMPanel::onClickToggleActiveSpeakers(const LLSD& value)
 
 void LLFloaterIMPanel::onInputEditorFocusReceived()
 {
-	mHistoryEditor->setCursorAndScrollToEnd();
+	if (gSavedSettings.getBOOL("LiruLegacyScrollToEnd"))
+		mHistoryEditor->setCursorAndScrollToEnd();
 }
 
 void LLFloaterIMPanel::onInputEditorKeystroke(LLLineEditor* caller)

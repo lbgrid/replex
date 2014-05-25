@@ -101,6 +101,8 @@ private:
 	bool mDisablePointAtAndBeam;
 	bool mPrivateLookAt;
 	bool mShowLookAt;
+	S32  mLookAtNames;
+	bool mLookAtLines;
 	bool mQuietSnapshotsToDisk;
 	bool mAnnounceBumps;
 	bool mDetachBridge;
@@ -112,6 +114,7 @@ private:
 	F32 mNumScriptDiff;
 	std::string mRestartSound;
 	std::string mLandmark;
+	std::string mLandmarkBackup;
 
 	//Build -------------------------------------------------------------------------------
 	F32 mAlpha;
