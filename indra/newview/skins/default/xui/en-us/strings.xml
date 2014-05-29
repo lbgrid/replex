@@ -28,6 +28,7 @@ Make sure you entered the correct Login URI. An example of a Login URI is: \"htt
 	<string name="APP_NAME">Replex Viewer</string>
 	<string name="CAPITALIZED_APP_NAME">REPLEX VIEWER</string>
 	<string name="SHORT_APP_NAME">Replex</string>
+	<string name="APP_SITE">http://www.replex.org</string>
 	<string name="SECOND_LIFE_GRID">Second Life Grid</string>
 	<string name="SUPPORT_SITE">Second Life Support Portal</string>
 
