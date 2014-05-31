@@ -3,6 +3,7 @@
 project(viewer)
 
 include(00-Common)
+include(PrebuiltPlugin)
 include(Boost)
 include(DBusGlib)
 include(DirectX)
@@ -1880,6 +1881,8 @@ if (WINDOWS)
       COMMENT "Copying llcommon.dll to the runtime folder."
       )
 
+if (NOT SKIP_BUILDING_PLUGIN)
+  
   get_target_property(BUILT_SLPLUGIN SLPlugin LOCATION)
   add_custom_command(
       TARGET ${VIEWER_BINARY_NAME} POST_BUILD
@@ -1942,6 +1945,8 @@ if (WINDOWS)
         COMMENT "Copying winmm.dll to the runtime folder."
         )
   endif(WORD_SIZE EQUAL 32)
+
+endif (NOT SKIP_BUILDING_PLUGIN)
 
   # Copying the mime_types.xml file to app_settings
   set(mime_types_source "${CMAKE_SOURCE_DIR}/newview/skins/default/xui/en-us")

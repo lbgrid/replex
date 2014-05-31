@@ -1297,6 +1297,25 @@
           </map>
         </map>
       </map>
+      <key>prebuilt_plugin</key>
+      <map>
+        <key>copyright</key>
+        <string>Copyright (c) Linden Research Inc. et al</string>
+        <key>description</key>
+        <string>Precompiled 32-bit SLPlugin.exe and the modules</string>
+        <key>license</key>
+        <string>gpl</string>
+        <key>packages</key>
+        <map>
+          <key>windows64</key>
+          <map>
+            <key>md5sum</key>
+            <string>2abaf279d46047a33e55ba3da86b673e</string>
+            <key>url</key>
+            <uri>https://bitbucket.org/replex/libraries/downloads/prebuilt_plugin-1.8.6-windows-20140531.tar.bz2</uri>
+          </map>
+        </map>
+      </map>
       <key>pulseaudio</key>
       <map>
         <key>copyright</key>

@@ -5,6 +5,7 @@
 # VisualStudio. 
 
 include(CMakeCopyIfDifferent)
+include(PrebuiltPlugin)
 
 if(WORD_SIZE EQUAL 32)
     set(debug_libs_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/debug")
@@ -53,6 +54,9 @@ copy_if_different(
     ${debug_files}
     )
 set(all_targets ${all_targets} ${out_targets})
+
+
+if (NOT SKIP_BUILDING_PLUGIN)
 
 # Debug config runtime files required for the plugin test mule
 set(plugintest_debug_src_dir "${debug_libs_dir}")
@@ -214,6 +218,7 @@ copy_if_different(
     )
 set(all_targets ${all_targets} ${out_targets})
 
+endif (NOT SKIP_BUILDING_PLUGIN)
 
 set(release_src_dir "${release_libs_dir}")
 set(release_files
@@ -318,3 +323,36 @@ add_custom_target(copy_win_libs ALL
   )
 add_dependencies(copy_win_libs prepare)
 
+if (SKIP_BUILDING_PLUGIN)
+    set(prebuilt_plugin_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/bin/prebuilt_plugin")
+
+    add_custom_command(
+        TARGET copy_win_libs POST_BUILD
+        COMMAND ${CMAKE_COMMAND}
+        ARGS
+          -E
+          copy_directory
+          "${prebuilt_plugin_dir}"
+          "${CMAKE_CURRENT_BINARY_DIR}/Release/prebuilt_plugin"
+    )
+
+    add_custom_command(
+        TARGET copy_win_libs POST_BUILD
+        COMMAND ${CMAKE_COMMAND}
+        ARGS
+          -E
+          copy_directory
+          "${prebuilt_plugin_dir}"
+          "${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo/prebuilt_plugin"
+    )
+
+    add_custom_command(
+        TARGET copy_win_libs POST_BUILD
+        COMMAND ${CMAKE_COMMAND}
+        ARGS
+          -E
+          copy_directory
+          "${prebuilt_plugin_dir}"
+          "${CMAKE_CURRENT_BINARY_DIR}/Debug/prebuilt_plugin"
+    )
+endif (SKIP_BUILDING_PLUGIN)

@@ -7,6 +7,7 @@ include(LLCommon)
 include(LLMath)
 include(LLMessage)
 include(LLRender)
+include(PrebuiltPlugin)
 
 include_directories(
     ${LLCOMMON_INCLUDE_DIRS}
@@ -64,7 +65,9 @@ endif(LINUX AND STANDALONE)
 
 add_dependencies(llplugin prepare)
 
-add_subdirectory(slplugin)
+if (NOT SKIP_BUILDING_PLUGIN)
+	add_subdirectory(slplugin)
+endif (NOT SKIP_BUILDING_PLUGIN)
 
 # # Add tests
 # include(LLAddBuildTest)

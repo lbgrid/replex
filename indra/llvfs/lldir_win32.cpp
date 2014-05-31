@@ -196,7 +196,11 @@ LLDir_Win32::LLDir_Win32()
 		}
 	}
 
-	mLLPluginDir = mExecutableDir + mDirDelimiter + "llplugin";
+	mLLPluginDir = mExecutableDir + mDirDelimiter +
+#if defined(USE_PREBUILT_PLUGIN)
+		 "prebuilt_plugin" + mDirDelimiter +
+#endif
+		"llplugin";
 }
 
 LLDir_Win32::~LLDir_Win32()
@@ -317,6 +321,9 @@ BOOL LLDir_Win32::fileExists(const std::string &filename) const
 /*virtual*/ std::string LLDir_Win32::getLLPluginLauncher()
 {
 	return gDirUtilp->getExecutableDir() + gDirUtilp->getDirDelimiter() +
+#if defined(USE_PREBUILT_PLUGIN)
+		"prebuilt_plugin" + gDirUtilp->getDirDelimiter() +
+#endif
 		"SLPlugin.exe";
 }
 

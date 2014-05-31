@@ -89,6 +89,7 @@ set(cmake_SOURCE_FILES
     PNG.cmake
     PluginAPI.cmake
     Prebuilt.cmake
+    PrebuiltPlugin.cmake
     PulseAudio.cmake
     Python.cmake
     Qt4.cmake

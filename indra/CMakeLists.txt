@@ -29,6 +29,7 @@ include(Variables)
 include(BuildVersion)
 
 include(UnixInstall)
+include(PrebuiltPlugin)
 
 if (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING
@@ -42,6 +43,10 @@ if(NOT STANDALONE)
   set(prepare_depends ${CMAKE_BINARY_DIR}/prepare/prebuilt)
 endif(NOT STANDALONE)
 add_custom_target(prepare DEPENDS ${prepare_depends})
+
+if (SKIP_BUILDING_PLUGIN)
+  use_prebuilt_binary(prebuilt_plugin)
+endif (SKIP_BUILDING_PLUGIN)
 
 add_subdirectory(cmake)
 add_subdirectory(${LIBS_OPEN_PREFIX}aistatemachine)
@@ -79,7 +84,9 @@ add_subdirectory(${LIBS_OPEN_PREFIX}llplugin)
 add_subdirectory(${LIBS_OPEN_PREFIX}llui)
 
 # viewer plugins directory
-add_subdirectory(${LIBS_OPEN_PREFIX}plugins)
+if (NOT SKIP_BUILDING_PLUGIN)
+    add_subdirectory(${LIBS_OPEN_PREFIX}plugins)
+endif (NOT SKIP_BUILDING_PLUGIN)
 
 # llplugin testbed code (is this the right way to include it?)
 #if (NOT LINUX)

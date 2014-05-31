@@ -191,11 +191,6 @@ class WindowsManifest(ViewerManifest):
         else:
             release_lib_dir = "../../libraries/i686-win32/lib/release"
 
-        # Plugin host application
-        self.path(os.path.join(os.pardir,
-                               'llplugin', 'slplugin', self.args['configuration'], "SLPlugin.exe"),
-                  "SLPlugin.exe")
-
         # Plugin volume control
         if not self.is_win64() and self.prefix(src=self.args['configuration'], dst=""):
             self.path("winmm.dll")
@@ -235,49 +230,60 @@ class WindowsManifest(ViewerManifest):
         #    self.path("openjpeg.dll")
         #    self.end_prefix()
 
-        # Plugins - FilePicker
-        if self.prefix(src='../plugins/filepicker/%s' % self.args['configuration'], dst="llplugin"):
-            self.path("basic_plugin_filepicker.dll")
-            self.end_prefix()
 
-        # Media plugins - QuickTime
-        if self.prefix(src='../plugins/quicktime/%s' % self.args['configuration'], dst="llplugin"):
-            self.path("media_plugin_quicktime.dll")
-            self.end_prefix()
+        if os.path.exists(os.path.join(self.args['configuration'], "prebuilt_plugin")):
+            if self.prefix(src=self.args['configuration'], dst=""):
+                self.path("prebuilt_plugin")
+                self.end_prefix()
+        else:
+            # Plugin host application
+            self.path(os.path.join(os.pardir,
+                                   'llplugin', 'slplugin', self.args['configuration'], "SLPlugin.exe"),
+                      "SLPlugin.exe")
 
-        # Media plugins - WebKit/Qt
-        if self.prefix(src='../plugins/webkit/%s' % self.args['configuration'], dst="llplugin"):
-            self.path("media_plugin_webkit.dll")
-            self.end_prefix()
+            # Plugins - FilePicker
+            if self.prefix(src='../plugins/filepicker/%s' % self.args['configuration'], dst="llplugin"):
+                self.path("basic_plugin_filepicker.dll")
+                self.end_prefix()
+    
+            # Media plugins - QuickTime
+            if self.prefix(src='../plugins/quicktime/%s' % self.args['configuration'], dst="llplugin"):
+                self.path("media_plugin_quicktime.dll")
+                self.end_prefix()
+    
+            # Media plugins - WebKit/Qt
+            if self.prefix(src='../plugins/webkit/%s' % self.args['configuration'], dst="llplugin"):
+                self.path("media_plugin_webkit.dll")
+                self.end_prefix()
+    
+            # For WebKit/Qt plugin runtimes
+            if self.prefix(src=release_lib_dir, dst="llplugin"):
+                self.path("libeay32.dll")
+                self.path("qtcore4.dll")
+                self.path("qtgui4.dll")
+                self.path("qtnetwork4.dll")
+                self.path("qtopengl4.dll")
+                self.path("qtwebkit4.dll")
+                self.path("qtxmlpatterns4.dll")
+                self.path("ssleay32.dll")
+                self.end_prefix()
 
-        # For WebKit/Qt plugin runtimes
-        if self.prefix(src=release_lib_dir, dst="llplugin"):
-            self.path("libeay32.dll")
-            self.path("qtcore4.dll")
-            self.path("qtgui4.dll")
-            self.path("qtnetwork4.dll")
-            self.path("qtopengl4.dll")
-            self.path("qtwebkit4.dll")
-            self.path("qtxmlpatterns4.dll")
-            self.path("ssleay32.dll")
-            self.end_prefix()
-
-        # For WebKit/Qt plugin runtimes (image format plugins)
-        if self.prefix(src=release_lib_dir+"/imageformats", dst="llplugin/imageformats"):
-            self.path("qgif4.dll")
-            self.path("qico4.dll")
-            self.path("qjpeg4.dll")
-            self.path("qmng4.dll")
-            self.path("qsvg4.dll")
-            self.path("qtiff4.dll")
-            self.end_prefix()
-
-        if self.prefix(src=release_lib_dir+"/codecs", dst="llplugin/codecs"):
-            self.path("qcncodecs4.dll")
-            self.path("qjpcodecs4.dll")
-            self.path("qkrcodecs4.dll")
-            self.path("qtwcodecs4.dll")
-            self.end_prefix()
+            # For WebKit/Qt plugin runtimes (image format plugins)
+            if self.prefix(src=release_lib_dir+"/imageformats", dst="llplugin/imageformats"):
+                self.path("qgif4.dll")
+                self.path("qico4.dll")
+                self.path("qjpeg4.dll")
+                self.path("qmng4.dll")
+                self.path("qsvg4.dll")
+                self.path("qtiff4.dll")
+                self.end_prefix()
+    
+            if self.prefix(src=release_lib_dir+"/codecs", dst="llplugin/codecs"):
+                self.path("qcncodecs4.dll")
+                self.path("qjpcodecs4.dll")
+                self.path("qkrcodecs4.dll")
+                self.path("qtwcodecs4.dll")
+                self.end_prefix()
 
         # Get llcommon and deps. If missing assume static linkage and continue.
         if self.prefix(src=self.args['configuration'], dst=""):

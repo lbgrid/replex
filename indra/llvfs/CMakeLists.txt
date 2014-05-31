@@ -5,6 +5,7 @@ project(llvfs)
 include(00-Common)
 include(LLCommon)
 include(UnixInstall)
+include(PrebuiltPlugin)
 
 include_directories(
     ${LLCOMMON_INCLUDE_DIRS}
@@ -72,3 +73,7 @@ if (DARWIN)
   find_library(CARBON_LIBRARY Carbon)
   target_link_libraries(llvfs ${CARBON_LIBRARY})
 endif (DARWIN)
+
+if (SKIP_BUILDING_PLUGIN)
+    add_definitions(-DUSE_PREBUILT_PLUGIN=1)
+endif (SKIP_BUILDING_PLUGIN)
