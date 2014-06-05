@@ -1,0 +1,14 @@
+<llsd>
+    <map>
+    <key>skin_name</key>
+        <string>Replex</string>
+    <key>author_name</key>
+        <string>Skills Hak, modified by Latif Khalifa</string>
+    <key>additional_author_names</key>
+        <string>Linden Lab</string>
+    <key>skin_info</key>
+        <string>Modifie Gemini with higher constrast.</string>
+    <key>folder_name</key>
+        <string>replex</string>
+    </map>
+</llsd>
