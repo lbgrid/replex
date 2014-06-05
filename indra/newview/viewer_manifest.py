@@ -81,26 +81,21 @@ class ViewerManifest(LLManifest):
         # skins
         if self.prefix(src="skins"):
             self.path("paths.xml")
-            # include the entire textures directory recursively
-            if self.prefix(src="default/textures"):
-                self.path("*.tga")
-                self.path("*.j2c")
-                self.path("*.jpg")
-                self.path("*.png")
-                self.path("textures.xml")
-                self.end_prefix("default/textures")
-            self.path("default/xui/*/*.xml")
+
             self.path("Default.xml")
-            self.path("default/*.xml")
-            if self.prefix(src="dark/textures"):
-                self.path("*.tga")
-                self.path("*.j2c")
-                self.path("*.jpg")
-                self.path("*.png")
-                self.path("textures.xml")
-                self.end_prefix("dark/textures")
+            self.path("default")
+
+            self.path("replex.xml")
+            self.path("replex")
+
             self.path("dark.xml")
-            self.path("dark/*.xml")
+            self.path("dark")
+
+            self.path("Gemini.xml")
+            self.path("gemini")
+
+            self.path("Silver.xml")
+            self.path("silver")
 
             # Local HTML files (e.g. loading screen)
             if self.prefix(src="*/html"):
