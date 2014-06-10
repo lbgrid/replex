@@ -94,6 +94,7 @@ private:
 	bool mCmdMapToKeepPos;
 	std::string mCmdLineTP2;
 	std::string mCmdLineAway;
+	std::string mCmdLineRegionSay;
 	std::string mCmdLineURL;
 
 	//Security ----------------------------------------------------------------------------
@@ -126,6 +127,9 @@ private:
 	bool mNextCopy;
 	bool mNextMod;
 	bool mNextTrans;
+	bool mScriptNextCopy;
+	bool mScriptNextMod;
+	bool mScriptNextTrans;
 	std::string mShiny;
 	bool mTemporary;
 	std::string mTexture;
