@@ -364,9 +364,9 @@ std::string LLDir::buildSLOSCacheDir() const
 	else
 	{
 #if defined(_WIN64)
-		res = add(getOSCacheDir(), "SingularityViewer64");
+		res = add(getOSCacheDir(), "Replex64");
 #else
-		res = add(getOSCacheDir(), "SingularityViewer");
+		res = add(getOSCacheDir(), "Replex");
 #endif
 	}
 	return res;
