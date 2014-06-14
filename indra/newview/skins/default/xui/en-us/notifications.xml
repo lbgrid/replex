@@ -695,13 +695,6 @@ Go to the [SECOND_LIFE] web site for more information on partnering?
 
   <notification
    icon="alertmodal.tga"
-   name="ClickUploadHelpPermissions"
-   type="alertmodal">
-Your default permissions may not work in older regions.
-  </notification>
-
-  <notification
-   icon="alertmodal.tga"
    name="ClickWebProfileHelpAvatar"
    type="alertmodal">
 If this Resident has set a web profile URL then you can:
@@ -9750,6 +9743,17 @@ An internal error prevented us from properly updating your viewer.  The L$ balan
 Cannot create large prims that intersect other players.  Please re-try when other players have moved.
   </notification>
 
+  <notification
+   icon="alertmodal.tga"
+   name="DefaultObjectPermissions"
+   type="alert">
+There was a problem saving the default permissions due to the following reason: [REASON].  Please try setting the default permissions later.
+   <tag>fail</tag>
+   <usetemplate
+     name="okbutton"
+     yestext="OK"/>
+  </notification>
+
 
 <!-- Singularity Specific notifications should go below here, alphabetically -->
 <!-- Singu Note: RLVa notifications come first here -->
@@ -9775,6 +9779,17 @@ AntiSpam: Blocked [SOURCE] for spamming [TYPE]s [AMOUNT] times in [TIME] seconds
 AntiSpam: Blocked newline flood from [SOURCE] (over [AMOUNT] newlines).
   </notification>
 
+
+  <notification
+   icon="alertmodal.tga"
+   name="ConfirmDeleteUser"
+   type="alertmodal">
+Are you sure you want to delete the selected user?
+    <usetemplate
+     name="okcancelbuttonscanceldefault"
+     yestext="Yes"
+     notext="No"/>
+  </notification>
 
   <notification
    icon="alertmodal.tga"
