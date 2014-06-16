@@ -193,7 +193,7 @@ LLDir_Mac::LLDir_Mac()
 		if (error == noErr)
 		{
 			FSRefToLLString(&cacheDirRef, mOSCacheDir);
-			(void)CFCreateDirectory(&cacheDirRef, CFSTR("SingularityViewer"), NULL);
+			(void)CFCreateDirectory(&cacheDirRef, CFSTR("Replex"), NULL);
 		}
 		
 		// mOSUserAppDir

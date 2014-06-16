@@ -1715,7 +1715,7 @@ if (DARWIN)
     MACOSX_BUNDLE_BUNDLE_NAME "${VIEWER_BRANDING_NAME}"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${viewer_VERSION}"
     MACOSX_BUNDLE_BUNDLE_VERSION "${viewer_VERSION}"
-    MACOSX_BUNDLE_COPYRIGHT "Copyright 2013 Siana Gearz"
+    MACOSX_BUNDLE_COPYRIGHT "Copyright 2001-2014, Linden Research, Inc., Opensource Contributors"
     )
 
   add_custom_command(

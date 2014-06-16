@@ -158,7 +158,7 @@ BEGIN
             VALUE "FileDescription", "Replex Viewer"
             VALUE "FileVersion", "${vMAJOR}.${vMINOR}.${vPATCH}.${vBUILD}"
             VALUE "InternalName", "Second Life"
-            VALUE "LegalCopyright", "Copyright © 2001-2014, Linden Research, Inc., Opensource Ccontributors"
+            VALUE "LegalCopyright", "Copyright © 2001-2014, Linden Research, Inc., Opensource Contributors"
             VALUE "OriginalFilename", "ReplexViewer.exe"
             VALUE "ProductName", "Replex Viewer"
             VALUE "ProductVersion", "${vMAJOR}.${vMINOR}.${vPATCH}.${vBUILD}"
