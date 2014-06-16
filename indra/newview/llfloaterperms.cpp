@@ -104,7 +104,6 @@ U32 LLFloaterPerms::getNextOwnerPerms(std::string prefix)
 
 namespace
 {
-	bool everyone_export;
 	void handle_checkboxes(LLView* view, const std::string& ctrl_name, const LLSD& value, const std::string& type)
 	{
 		if (ctrl_name == type+"everyone_export")
@@ -124,7 +123,7 @@ namespace
 			if (!value) // If any of these are unchecked, export can no longer be checked.
 				view->getChildView(type+"everyone_export")->setEnabled(false);
 			else
-				view->getChildView(type+"everyone_export")->setEnabled(LFSimFeatureHandler::instance().simSupportsExport() && LLFloaterPerms::getNextOwnerPerms(type) == PERM_ITEM_UNRESTRICTED);
+				view->getChildView(type+"everyone_export")->setEnabled(LFSimFeatureHandler::instance().simSupportsExport() && (LLFloaterPerms::getNextOwnerPerms(type) & PERM_ITEM_UNRESTRICTED) == PERM_ITEM_UNRESTRICTED);
 		}
 	}
 }
@@ -153,7 +152,7 @@ const std::string LLFloaterPermsDefault::sCategoryNames[CAT_LAST] =
 void LLFloaterPermsDefault::initCheckboxes(bool export_support, const std::string& type)
 {
 	const U32 next_owner_perms = LLFloaterPerms::getNextOwnerPerms(type);
-	getChildView(type + "everyone_export")->setEnabled(export_support && next_owner_perms == PERM_ITEM_UNRESTRICTED);
+	getChildView(type + "everyone_export")->setEnabled(export_support && (next_owner_perms & PERM_ITEM_UNRESTRICTED) == PERM_ITEM_UNRESTRICTED);
 
 	if (!(next_owner_perms & PERM_COPY))
 	{
