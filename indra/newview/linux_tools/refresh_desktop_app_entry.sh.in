@@ -12,7 +12,7 @@ function install_desktop_entry()
 
     local desktop_entry="\
 [Desktop Entry]\n\
-Name=@VIEWER_BRANDING_ID@\n\
+Name=@VIEWER_CHANNEL@\n\
 Comment=Client for Online Virtual Worlds, such as Second Life\n\
 Exec=${installation_prefix}/@VIEWER_BRANDING_ID@\n\
 Icon=${installation_prefix}/@VIEWER_BRANDING_ID@_icon.png\n\
