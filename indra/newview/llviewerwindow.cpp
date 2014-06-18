@@ -2709,7 +2709,8 @@ BOOL LLViewerWindow::handleKey(KEY key, MASK mask)
 		(MASK_CONTROL & mask) &&
 		('D' == key || 'd' == key))
 	{
-		toggle_debug_menus(NULL);
+		if (gSavedSettings.getBOOL("LiruUseAdvancedMenuShortcut"))
+			toggle_debug_menus(NULL);
 	}
 
 	// handle shift-escape key (reset camera view)
