@@ -222,6 +222,7 @@
 #include "wlfPanel_AdvSettings.h" //Lower right Windlight and Rendering options
 #include "lldaycyclemanager.h"
 #include "llfloaterblacklist.h"
+#include "scriptcounter.h"
 #include "shfloatermediaticker.h"
 #include "llpacketring.h"
 // </edit>
@@ -1835,43 +1836,6 @@ bool idle_startup()
 		LLVoiceClient::getInstance()->updateSettings();
 		display_startup();
 
-		if (gSavedSettings.getBOOL("ShowMiniMap"))
-		{
-			LLFloaterMap::showInstance();
-		}
-		if (gSavedSettings.getBOOL("ShowRadar"))
-		{
-			LLFloaterAvatarList::showInstance();
-		}
-		// <edit>
-		else if (gSavedSettings.getBOOL("RadarKeepOpen"))
-		{
-			LLFloaterAvatarList::getInstance()->close();
-		}
-		if (gSavedSettings.getBOOL("SHShowMediaTicker"))
-		{
-			SHFloaterMediaTicker::showInstance();
-		}
-		// </edit>
-		if (gSavedSettings.getBOOL("ShowCameraControls"))
-		{
-			LLFloaterCamera::showInstance();
-		}
-		if (gSavedSettings.getBOOL("ShowMovementControls"))
-		{
-			LLFloaterMove::showInstance();
-		}
-
-		if (gSavedSettings.getBOOL("ShowActiveSpeakers"))
-		{
-			LLFloaterActiveSpeakers::showInstance();
-		}
-
-		if (gSavedSettings.getBOOL("ShowBeaconsFloater"))
-		{
-			LLFloaterBeacons::showInstance();
-		}
-
 		// *Note: this is where gWorldMap used to be initialized.
 
 		// register null callbacks for audio until the audio system is initialized
@@ -2419,6 +2383,43 @@ bool idle_startup()
 		gDisplaySwapBuffers = TRUE;
 		display_startup();
 
+		if (gSavedSettings.getBOOL("ShowMiniMap"))
+		{
+			LLFloaterMap::showInstance();
+		}
+		if (gSavedSettings.getBOOL("ShowRadar"))
+		{
+			LLFloaterAvatarList::showInstance();
+		}
+		// <edit>
+		else if (gSavedSettings.getBOOL("RadarKeepOpen"))
+		{
+			LLFloaterAvatarList::getInstance()->close();
+		}
+		if (gSavedSettings.getBOOL("SHShowMediaTicker"))
+		{
+			SHFloaterMediaTicker::showInstance();
+		}
+		// </edit>
+		if (gSavedSettings.getBOOL("ShowCameraControls"))
+		{
+			LLFloaterCamera::showInstance();
+		}
+		if (gSavedSettings.getBOOL("ShowMovementControls"))
+		{
+			LLFloaterMove::showInstance();
+		}
+
+		if (gSavedSettings.getBOOL("ShowActiveSpeakers"))
+		{
+			LLFloaterActiveSpeakers::showInstance();
+		}
+
+		if (gSavedSettings.getBOOL("ShowBeaconsFloater"))
+		{
+			LLFloaterBeacons::showInstance();
+		}
+
 		LLMessageSystem* msg = gMessageSystem;
 		msg->setHandlerFuncFast(_PREHASH_SoundTrigger,				hooked_process_sound_trigger);
 		msg->setHandlerFuncFast(_PREHASH_PreloadSound,				process_preload_sound);
@@ -2961,6 +2962,22 @@ void pass_processObjectPropertiesFamily(LLMessageSystem *msg, void**)
 	JCFloaterAreaSearch::processObjectPropertiesFamily(msg, NULL);
 }
 
+void process_script_running_reply(LLMessageSystem* msg, void** v)
+{
+	LLLiveLSLEditor::processScriptRunningReply(msg, v);
+	if (ScriptCounter::sCheckMap.size())
+	{
+		LLUUID item_id;
+		msg->getUUIDFast(_PREHASH_Script, _PREHASH_ItemID, item_id);
+		std::map<LLUUID,ScriptCounter*>::iterator it = ScriptCounter::sCheckMap.find(item_id);
+		if (it != ScriptCounter::sCheckMap.end())
+		{
+			it->second->processRunningReply(msg);
+			ScriptCounter::sCheckMap.erase(it);
+		}
+	}
+}
+
 void register_viewer_callbacks(LLMessageSystem* msg)
 {
 	msg->setHandlerFuncFast(_PREHASH_LayerData,				process_layer_data );
@@ -3011,8 +3028,7 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 	msg->setHandlerFuncFast(_PREHASH_CoarseLocationUpdate,		LLWorld::processCoarseUpdate, NULL);
 	msg->setHandlerFuncFast(_PREHASH_ReplyTaskInventory, 		LLViewerObject::processTaskInv,	NULL);
 	msg->setHandlerFuncFast(_PREHASH_DerezContainer,			process_derez_container, NULL);
-	msg->setHandlerFuncFast(_PREHASH_ScriptRunningReply,
-						&LLLiveLSLEditor::processScriptRunningReply);
+	msg->setHandlerFuncFast(_PREHASH_ScriptRunningReply, process_script_running_reply);
 
 	msg->setHandlerFuncFast(_PREHASH_DeRezAck, process_derez_ack);
 
