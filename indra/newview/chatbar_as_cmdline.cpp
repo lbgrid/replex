@@ -246,23 +246,21 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 		{
 			if(command == utf8str_tolower(sAscentCmdLinePos))
 			{
-				F32 x,y,z;
-				if (i >> x)
+				F32 x, y, z;
+				if (i >> x && i >> y)
 				{
-					if (i >> y)
+					if (!(i >> z))
 					{
-						if (i >> z)
-						{
-							LLViewerRegion* agentRegionp = gAgent.getRegion();
-							if(agentRegionp)
-							{
-								LLVector3 targetPos(x,y,z);
-								LLVector3d pos_global = from_region_handle(agentRegionp->getHandle());
-								pos_global += LLVector3d((F64)targetPos.mV[0],(F64)targetPos.mV[1],(F64)targetPos.mV[2]);
-								gAgent.teleportViaLocation(pos_global);
-								return false;
-							}
-						}
+						z = gAgent.getPositionGlobal().mdV[VZ];
+					}
+					LLViewerRegion* agentRegionp = gAgent.getRegion();
+					if(agentRegionp)
+					{
+						LLVector3 targetPos(x, y, z);
+						LLVector3d pos_global = from_region_handle(agentRegionp->getHandle());
+						pos_global += LLVector3d((F64)targetPos.mV[VX], (F64)targetPos.mV[VY], (F64)targetPos.mV[VZ]);
+						gAgent.teleportViaLocation(pos_global);
+						return false;
 					}
 				}
 			}
