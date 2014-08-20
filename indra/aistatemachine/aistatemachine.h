@@ -133,7 +133,7 @@ class AIStateMachine : public LLThreadSafeRefCount
 			static TimeData sRoot;
 #endif
 		};
-	protected:
+	//protected:
 #if !STATE_MACHINE_PROFILING
 		StateTimerBase(const std::string& name) : mData(name) {}
 		~StateTimerBase() {}
