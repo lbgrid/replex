@@ -2049,13 +2049,12 @@ void LLMeshHeaderResponder::completedRaw(LLChannelDescriptors const& channels,
 
 	S32 data_size = buffer->countAfter(channels.in(), NULL);
 
-	static U8 data[16384];
-	llassert_always(data_size <= sizeof(data));
-	memset(data + data_size, 0, sizeof(data)-data_size);
+	U8* data = NULL;
 
 	if (data_size > 0)
 	{
 		AIStateMachine::StateTimer timer("readAfter");
+		data = new U8[data_size];
 		buffer->readAfter(channels.in(), NULL, data, data_size);
 	}
 
@@ -2072,7 +2071,7 @@ void LLMeshHeaderResponder::completedRaw(LLChannelDescriptors const& channels,
 			<< "Unable to parse mesh header: "
 			<< mStatus << ": " << mReason << llendl;
 	}
-	else if (data_size > 0)
+	else if (data && data_size > 0)
 	{
 		//header was successfully retrieved from sim, cache in vfs
 		LLUUID mesh_id = mMeshParams.getSculptID();
@@ -2111,20 +2110,28 @@ void LLMeshHeaderResponder::completedRaw(LLChannelDescriptors const& channels,
 				LLMeshRepository::sCacheBytesWritten += data_size;
 
 				AIStateMachine::StateTimer timer("WriteData");
-				S32 bytes_remaining = bytes;
-				while (bytes_remaining > 0)
+				file.write((const U8*) data, data_size);
+			
+				//zero out the rest of the file 
+				U8 block[4096];
+				memset(block, 0, 4096);
+
+				while (bytes-file.tell() > 4096)
 				{
-					const S32 bytes_written = llmin(bytes_remaining, (S32)sizeof(data));
-					file.write(data, bytes_written);
-					if (bytes_remaining == bytes && bytes_written < bytes_remaining)
-					{
-						memset(data, 0, data_size);
-					}
-					bytes_remaining -= llmin(bytes_remaining, bytes_written);
+					file.write(block, 4096);
+				}
+
+				S32 remaining = bytes-file.tell();
+
+				if (remaining > 0)
+				{
+					file.write(block, remaining);
 				}
 			}
 		}
 	}
+
+	delete [] data;
 }
 
 
