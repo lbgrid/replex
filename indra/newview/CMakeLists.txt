@@ -445,6 +445,7 @@ set(viewer_SOURCE_FILES
     llscrollingpanelparam.cpp
     llscrollingpanelparambase.cpp
     llselectmgr.cpp
+    llshareavatarhandler.cpp
     llsky.cpp
     llslurl.cpp
     llspatialpartition.cpp
