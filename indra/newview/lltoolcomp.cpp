@@ -43,7 +43,6 @@
 #include "lltoolmgr.h"
 #include "lltoolselectrect.h"
 #include "lltoolplacer.h"
-#include "llviewercamera.h" // <exodus/>
 #include "llviewermenu.h"
 #include "llviewerobject.h"
 #include "llviewerwindow.h"
@@ -51,7 +50,7 @@
 #include "llagentcamera.h"
 #include "llfloatertools.h"
 #include "llviewercontrol.h"
-
+#include "llviewercamera.h"
 
 const S32 BUTTON_HEIGHT = 16;
 const S32 BUTTON_WIDTH_SMALL = 32;
@@ -62,7 +61,7 @@ extern LLControlGroup gSavedSettings;
 
 
 // we use this in various places instead of NULL
-static LLTool* sNullTool = new LLTool(std::string("null"), NULL); 
+static LLPointer<LLTool> sNullTool(new LLTool(std::string("null"), NULL));
 
 //-----------------------------------------------------------------------
 // LLToolComposite
@@ -129,12 +128,20 @@ void LLToolComposite::handleSelect()
 	mSelected = TRUE; 
 }
 
+void LLToolComposite::handleDeselect()
+{
+	mCur->handleDeselect();
+	mCur = mDefault;
+	mSelected = FALSE;
+}
+
 //----------------------------------------------------------------------------
 // LLToolCompInspect
 //----------------------------------------------------------------------------
 
 LLToolCompInspect::LLToolCompInspect()
-: LLToolComposite(std::string("Inspect"))
+: LLToolComposite(std::string("Inspect")),
+  mIsToolCameraActive(FALSE)
 {
 	mSelectRect		= new LLToolSelectRect(this);
 	mDefault = mSelectRect;
@@ -149,42 +156,87 @@ LLToolCompInspect::~LLToolCompInspect()
 
 BOOL LLToolCompInspect::handleMouseDown(S32 x, S32 y, MASK mask)
 {
-	mMouseDown = TRUE;
-	gViewerWindow->pickAsync(x, y, mask, pickCallback);
-	return TRUE;
+	BOOL handled = FALSE;
+
+	if (mCur == LLToolCamera::getInstance())
+	{
+		handled = mCur->handleMouseDown(x, y, mask);
+	}
+	else
+	{
+		mMouseDown = TRUE;
+		gViewerWindow->pickAsync(x, y, mask, pickCallback);
+		handled = TRUE;
+	}
+
+	return handled;
+}
+
+BOOL LLToolCompInspect::handleMouseUp(S32 x, S32 y, MASK mask)
+{
+	BOOL handled = LLToolComposite::handleMouseUp(x, y, mask);
+	mIsToolCameraActive = getCurrentTool() == LLToolCamera::getInstance();
+	return handled;
 }
 
 void LLToolCompInspect::pickCallback(const LLPickInfo& pick_info)
 {
 	LLViewerObject* hit_obj = pick_info.getObject();
+	LLToolCompInspect* tool_inspectp = LLToolCompInspect::getInstance();
 
-	if (!LLToolCompInspect::getInstance()->mMouseDown)
+	if (!tool_inspectp->mMouseDown)
 	{
 		// fast click on object, but mouse is already up...just do select
-		LLToolCompInspect::getInstance()->mSelectRect->handleObjectSelection(pick_info, gSavedSettings.getBOOL("EditLinkedParts"), FALSE);
+		tool_inspectp->mSelectRect->handleObjectSelection(pick_info, gSavedSettings.getBOOL("EditLinkedParts"), FALSE);
 		return;
 	}
 
-	if( hit_obj )
-	{
-		if (LLSelectMgr::getInstance()->getSelection()->getObjectCount())
-		{
-			LLEditMenuHandler::gEditMenuHandler = LLSelectMgr::getInstance();
-		}
-		LLToolCompInspect::getInstance()->setCurrentTool( LLToolCompInspect::getInstance()->mSelectRect );
-		LLToolCompInspect::getInstance()->mSelectRect->handlePick( pick_info );
+	LLSelectMgr* mgr_selectp = LLSelectMgr::getInstance();
+	if (hit_obj && mgr_selectp->getSelection()->getObjectCount()) {
+		LLEditMenuHandler::gEditMenuHandler = mgr_selectp;
+	}
 
-	}
-	else
-	{
-		LLToolCompInspect::getInstance()->setCurrentTool( LLToolCompInspect::getInstance()->mSelectRect );
-		LLToolCompInspect::getInstance()->mSelectRect->handlePick( pick_info );
-	}
+	tool_inspectp->setCurrentTool( tool_inspectp->mSelectRect );
+	tool_inspectp->mIsToolCameraActive = FALSE;
+	tool_inspectp->mSelectRect->handlePick( pick_info );
 }
 
 BOOL LLToolCompInspect::handleDoubleClick(S32 x, S32 y, MASK mask)
 {
 	return TRUE;
+}
+
+BOOL LLToolCompInspect::handleKey(KEY key, MASK mask)
+{
+	BOOL handled = FALSE;
+
+	if(KEY_ALT == key)
+	{
+		setCurrentTool(LLToolCamera::getInstance());
+		mIsToolCameraActive = TRUE;
+		handled = TRUE;
+	}
+	else
+	{
+		handled = LLToolComposite::handleKey(key, mask);
+	}
+
+	return handled;
+}
+
+void LLToolCompInspect::onMouseCaptureLost()
+{
+	LLToolComposite::onMouseCaptureLost();
+	mIsToolCameraActive = FALSE;
+}
+
+void LLToolCompInspect::keyUp(KEY key, MASK mask)
+{
+	if (KEY_ALT == key && mCur == LLToolCamera::getInstance())
+	{
+		setCurrentTool(mDefault);
+		mIsToolCameraActive = FALSE;
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -400,6 +452,7 @@ LLTool* LLToolCompScale::getOverrideTool(MASK mask)
 	{
 		return LLToolCompRotate::getInstance();
 	}
+
 	return LLToolComposite::getOverrideTool(mask);
 }
 
@@ -411,7 +464,6 @@ BOOL LLToolCompScale::handleDoubleClick(S32 x, S32 y, MASK mask)
 		// You should already have an object selected from the mousedown.
 		// If so, show its properties
 		gFloaterTools->showPanel(LLFloaterTools::PANEL_CONTENTS);
-		//gBuildView->setPropertiesPanelOpen(TRUE);
 		return TRUE;
 	}
 	else
@@ -609,7 +661,6 @@ BOOL LLToolCompRotate::handleDoubleClick(S32 x, S32 y, MASK mask)
 		// You should already have an object selected from the mousedown.
 		// If so, show its properties
 		gFloaterTools->showPanel(LLFloaterTools::PANEL_CONTENTS);
-		//gBuildView->setPropertiesPanelOpen(TRUE);
 		return TRUE;
 	}
 	else
@@ -638,7 +689,7 @@ void LLToolCompRotate::render()
 
 LLToolCompGun::LLToolCompGun()
 	: LLToolComposite(std::string("Mouselook"))
-	, mRightMouseButton(false), mMenuShown(false), mTimerFOV(), mOriginalFOV(), mStartFOV(), mTargetFOV() // <exodus/>
+	, mMenuShown(false), mTimerFOV(), mOriginalFOV(), mStartFOV(), mTargetFOV()
 {
 	mGun = new LLToolGun(this);
 	mGrab = new LLToolGrab(this);
@@ -647,10 +698,9 @@ LLToolCompGun::LLToolCompGun()
 	setCurrentTool(mGun);
 	mDefault = mGun;
 
-	// <exodus>
 	mTimerFOV.stop();
-	// </exodus>
 }
+
 
 LLToolCompGun::~LLToolCompGun()
 {
@@ -663,6 +713,45 @@ LLToolCompGun::~LLToolCompGun()
 	// don't delete a static object
 	// delete mNull;
 	mNull = NULL;
+}
+
+BOOL LLToolCompGun::handleMouseDown(S32 x, S32 y, MASK mask)
+{
+	// if the left button is grabbed, don't put up the pie menu
+	if (gAgent.leftButtonGrabbed())
+	{
+		gAgent.setControlFlags(AGENT_CONTROL_ML_LBUTTON_DOWN);
+		return FALSE;
+	}
+
+	// On mousedown, start grabbing
+	gGrabTransientTool = this;
+	LLToolMgr::getInstance()->getCurrentToolset()->selectTool( (LLTool*) mGrab );
+
+	return LLToolGrab::getInstance()->handleMouseDown(x, y, mask);
+}
+
+BOOL LLToolCompGun::handleMouseUp(S32 x, S32 y, MASK mask)
+{
+	gAgent.setControlFlags(AGENT_CONTROL_ML_LBUTTON_UP);
+	setCurrentTool( (LLTool*) mGun );
+	return TRUE;
+}
+
+BOOL LLToolCompGun::handleDoubleClick(S32 x, S32 y, MASK mask)
+{
+	// if the left button is grabbed, don't put up the pie menu
+	if (gAgent.leftButtonGrabbed())
+	{
+		gAgent.setControlFlags(AGENT_CONTROL_ML_LBUTTON_DOWN);
+		return FALSE;
+	}
+
+	// On mousedown, start grabbing
+	gGrabTransientTool = this;
+	LLToolMgr::getInstance()->getCurrentToolset()->selectTool( (LLTool*) mGrab );
+
+	return LLToolGrab::getInstance()->handleDoubleClick(x, y, mask);
 }
 
 BOOL LLToolCompGun::handleHover(S32 x, S32 y, MASK mask)
@@ -700,48 +789,45 @@ BOOL LLToolCompGun::handleHover(S32 x, S32 y, MASK mask)
 	return TRUE; 
 }
 
-
-BOOL LLToolCompGun::handleMouseDown(S32 x, S32 y, MASK mask)
-{ 
-	// if the left button is grabbed, don't put up the pie menu
-	if (gAgent.leftButtonGrabbed())
-	{
-		gAgent.setControlFlags(AGENT_CONTROL_ML_LBUTTON_DOWN);
-		return FALSE;
-	}
-
-	// On mousedown, start grabbing
-	gGrabTransientTool = this;
-	LLToolMgr::getInstance()->getCurrentToolset()->selectTool( (LLTool*) mGrab );
-
-	return LLToolGrab::getInstance()->handleMouseDown(x, y, mask);
-}
-
-
-BOOL LLToolCompGun::handleDoubleClick(S32 x, S32 y, MASK mask)
-{
-	// if the left button is grabbed, don't put up the pie menu
-	if (gAgent.leftButtonGrabbed())
-	{
-		gAgent.setControlFlags(AGENT_CONTROL_ML_LBUTTON_DOWN);
-		return FALSE;
-	}
-
-	// On mousedown, start grabbing
-	gGrabTransientTool = this;
-	LLToolMgr::getInstance()->getCurrentToolset()->selectTool( (LLTool*) mGrab );
-
-	return LLToolGrab::getInstance()->handleDoubleClick(x, y, mask);
-}
-
-/* Singu Note: Moved to bottom, upstream is Exodus
 BOOL LLToolCompGun::handleRightMouseDown(S32 x, S32 y, MASK mask)
-*/
-
-BOOL LLToolCompGun::handleMouseUp(S32 x, S32 y, MASK mask)
 {
-	gAgent.setControlFlags(AGENT_CONTROL_ML_LBUTTON_UP);
-	setCurrentTool( (LLTool*) mGun );
+	// Singu Note: Beware the alt-click menu
+	if (gSavedSettings.getBOOL("LiruMouselookMenu") && mask & MASK_ALT)
+	{
+		mMenuShown = true;
+		return false;
+	}
+
+	LLViewerCamera& cam(LLViewerCamera::instance());
+	if (!mTimerFOV.getStarted())
+	{
+		mStartFOV = cam.getAndSaveDefaultFOV();
+		mOriginalFOV = mStartFOV;
+	}
+	else mStartFOV = cam.getDefaultFOV();
+
+	mTargetFOV = gSavedSettings.getF32("ExodusAlternativeFOV");
+	gSavedSettings.getBOOL("LiruMouselookInstantZoom") ? cam.setDefaultFOV(mTargetFOV) : mTimerFOV.start();
+	cam.mSavedFOVLoaded = false;
+
+	return TRUE;
+}
+
+BOOL LLToolCompGun::handleRightMouseUp(S32 x, S32 y, MASK mask)
+{
+	// Singu Note: Beware the alt-click menu
+	if (mMenuShown)
+	{
+		mMenuShown = false;
+		return LLToolComposite::handleRightMouseUp(x, y, mask);
+	}
+
+	LLViewerCamera& cam(LLViewerCamera::instance());
+	mStartFOV = cam.getDefaultFOV();
+	mTargetFOV = mOriginalFOV;
+	gSavedSettings.getBOOL("LiruMouselookInstantZoom") ? cam.setDefaultFOV(mTargetFOV) : mTimerFOV.start();
+	cam.mSavedFOVLoaded = false;
+
 	return TRUE;
 }
 
@@ -764,68 +850,20 @@ void	LLToolCompGun::handleSelect()
 void	LLToolCompGun::handleDeselect()
 {
 	LLToolComposite::handleDeselect();
-	if (mRightMouseButton || mTimerFOV.getStarted()) // Singu Note: Load Default FOV if we were zoomed in
+	if (mTimerFOV.getStarted()) // <singu/> Note: Load Default FOV if we were zooming in
 	{
 		LLViewerCamera::getInstance()->loadDefaultFOV();
-		mRightMouseButton = false;
 	}
 	setMouseCapture(FALSE);
 }
 
-// <exodus>
-
-BOOL LLToolCompGun::handleRightMouseUp(S32 x, S32 y, MASK mask)
-{
-	// Singu Note: Beware the alt-click menu
-	if (mRightMouseButton)
-	{
-		mRightMouseButton = false;
-
-		mStartFOV = LLViewerCamera::getInstance()->getDefaultFOV();
-		mTargetFOV = mOriginalFOV;
-		gSavedSettings.getBOOL("LiruMouselookInstantZoom") ? LLViewerCamera::getInstance()->setDefaultFOV(mTargetFOV) :
-		mTimerFOV.start();
-	}
-
-	if (mMenuShown)
-	{
-		mMenuShown = false;
-		return LLToolComposite::handleRightMouseUp(x, y, mask);
-	}
-
-	return TRUE;
-}
-
-BOOL LLToolCompGun::handleRightMouseDown(S32 x, S32 y, MASK mask)
-{
-	// Singu Note: Beware the alt-click menu
-	if (gSavedSettings.getBOOL("LiruMouselookMenu") && mask & MASK_ALT)
-	{
-		mMenuShown = true;
-		return false;
-	}
-
-	mRightMouseButton = true;
-
-	if(!mTimerFOV.getStarted())
-	{
-		mStartFOV = LLViewerCamera::getInstance()->getAndSaveDefaultFOV();
-		mOriginalFOV = mStartFOV;
-	}
-	else mStartFOV = LLViewerCamera::getInstance()->getDefaultFOV();
-
-	mTargetFOV = gSavedSettings.getF32("ExodusAlternativeFOV");
-	gSavedSettings.getBOOL("LiruMouselookInstantZoom") ? LLViewerCamera::getInstance()->setDefaultFOV(mTargetFOV) :
-	mTimerFOV.start();
-
-	return TRUE;
-}
 
 BOOL LLToolCompGun::handleScrollWheel(S32 x, S32 y, S32 clicks)
 {
-	if (mRightMouseButton)
+	if (gViewerWindow->getRightMouseDown())
 	{
-		mStartFOV = LLViewerCamera::getInstance()->getDefaultFOV();
+		LLViewerCamera& cam(LLViewerCamera::instance());
+		mStartFOV = cam.getDefaultFOV();
 
 		gSavedSettings.setF32(
 			"ExodusAlternativeFOV",
@@ -834,34 +872,36 @@ BOOL LLToolCompGun::handleScrollWheel(S32 x, S32 y, S32 clicks)
 				llclamp(mTargetFOV -= (0.05f * -clicks), 0.1f, 3.0f)
 		);
 
-		gSavedSettings.getBOOL("LiruMouselookInstantZoom") ? LLViewerCamera::getInstance()->setDefaultFOV(mTargetFOV) :
-		mTimerFOV.start();
+		if (gSavedSettings.getBOOL("LiruMouselookInstantZoom"))
+			cam.setDefaultFOV(mTargetFOV);
+		else
+			mTimerFOV.start();
+		cam.mSavedFOVLoaded = false;
 	}
-	else if (clicks > 0) gAgentCamera.changeCameraToDefault();
-
+	else if (clicks > 0)
+	{
+		gAgentCamera.changeCameraToDefault();
+	}
 	return TRUE;
 }
-
-// Zoom related stuff...
 
 void LLToolCompGun::draw()
 {
 	if (mTimerFOV.getStarted())
 	{
-		if (!LLViewerCamera::getInstance()->mSavedFOVLoaded && mStartFOV != mTargetFOV)
+		LLViewerCamera& cam(LLViewerCamera::instance());
+		if (!cam.mSavedFOVLoaded && mStartFOV != mTargetFOV)
 		{
 			F32 timer = mTimerFOV.getElapsedTimeF32();
 
 			if (timer > 0.15f)
 			{
-				LLViewerCamera::getInstance()->setDefaultFOV(mTargetFOV);
+				cam.setDefaultFOV(mTargetFOV);
 				mTimerFOV.stop();
 			}
-			else LLViewerCamera::getInstance()->setDefaultFOV(lerp(mStartFOV, mTargetFOV, timer * 6.66f));
+			else cam.setDefaultFOV(lerp(mStartFOV, mTargetFOV, timer * 6.66f));
 		}
 		else mTimerFOV.stop();
 	}
-	LLToolComposite::draw(); // Singu Note: We call parent here, instead of being clueless and adding to LLViewerWindow::draw for crosshairs and such
+	LLToolComposite::draw();
 }
-
-// </exodus>

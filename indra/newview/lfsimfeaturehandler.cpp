@@ -21,6 +21,7 @@
 
 #include "llagent.h"
 #include "llviewerregion.h"
+#include "llmutelist.h"
 #include "hippogridmanager.h"
 
 LFSimFeatureHandler::LFSimFeatureHandler()
@@ -33,6 +34,7 @@ LFSimFeatureHandler::LFSimFeatureHandler()
 {
 	if (!gHippoGridManager->getCurrentGrid()->isSecondLife()) // Remove this line if we ever handle SecondLife sim features
 		gAgent.addRegionChangedCallback(boost::bind(&LFSimFeatureHandler::handleRegionChange, this));
+	LLMuteList::instance().mGodLastNames.insert("Linden");
 }
 
 ExportPolicy LFSimFeatureHandler::exportPolicy() const
@@ -84,6 +86,11 @@ void LFSimFeatureHandler::setSupportedFeatures()
 				has_feature_or_default(mDestinationGuideURL, extras, "destination-guide-url");
 				mMapServerURL = extras.has("map-server-url") ? extras["map-server-url"].asString() : "";
 				has_feature_or_default(mSearchURL, extras, "search-server-url");
+				if (extras.has("GridName"))
+				{
+					const std::string& grid_name(extras["GridName"]);
+					mGridName = gHippoGridManager->getConnectedGrid()->getGridName() != grid_name ? grid_name : "";
+				}
 			}
 			has_feature_or_default(mSayRange, extras, "say-range");
 			has_feature_or_default(mShoutRange, extras, "shout-range");
@@ -97,40 +104,39 @@ void LFSimFeatureHandler::setSupportedFeatures()
 				mDestinationGuideURL.reset();
 				mMapServerURL = "";
 				mSearchURL.reset();
+				mGridName.reset();
 			}
 			mSayRange.reset();
 			mShoutRange.reset();
 			mWhisperRange.reset();
 		}
+
+		LLMuteList& mute_list(LLMuteList::instance());
+		mute_list.mGodLastNames.clear();
+		mute_list.mGodFullNames.clear();
+
+		if (info.has("god_names"))
+		{
+			const LLSD& god_names(info["god_names"]);
+			if (god_names.has("last_names"))
+			{
+				const LLSD& last_names(god_names["last_names"]);
+
+				for (LLSD::array_const_iterator it = last_names.beginArray(); it != last_names.endArray(); ++it)
+					mute_list.mGodLastNames.insert((*it).asString());
+			}
+
+			if (god_names.has("full_names"))
+			{
+				const LLSD& full_names(god_names["full_names"]);
+
+				for (LLSD::array_const_iterator it = full_names.beginArray(); it != full_names.endArray(); ++it)
+					mute_list.mGodFullNames.insert((*it).asString());
+			}
+		}
+		else
+		{
+			mute_list.mGodLastNames.insert("Linden");
+		}
 	}
-}
-
-boost::signals2::connection LFSimFeatureHandler::setSupportsExportCallback(const SignaledType<bool>::slot_t& slot)
-{
-	return mSupportsExport.connect(slot);
-}
-
-boost::signals2::connection LFSimFeatureHandler::setDestinationGuideURLCallback(const SignaledType<std::string>::slot_t& slot)
-{
-	return mDestinationGuideURL.connect(slot);
-}
-
-boost::signals2::connection LFSimFeatureHandler::setSearchURLCallback(const SignaledType<std::string>::slot_t& slot)
-{
-	return mSearchURL.connect(slot);
-}
-
-boost::signals2::connection LFSimFeatureHandler::setSayRangeCallback(const SignaledType<U32>::slot_t& slot)
-{
-	return mSayRange.connect(slot);
-}
-
-boost::signals2::connection LFSimFeatureHandler::setShoutRangeCallback(const SignaledType<U32>::slot_t& slot)
-{
-	return mShoutRange.connect(slot);
-}
-
-boost::signals2::connection LFSimFeatureHandler::setWhisperRangeCallback(const SignaledType<U32>::slot_t& slot)
-{
-	return mWhisperRange.connect(slot);
 }
